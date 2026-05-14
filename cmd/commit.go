@@ -14,10 +14,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var addAll bool
+
 var commitCmd = &cobra.Command{
 	Use:   "commit",
 	Short: "Generate AI commit message",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		if addAll {
+			err := gitinternal.Add()
+			if err != nil {
+				return err
+			}
+		}
 
 		diff, err := gitinternal.GetStagedDiff()
 		if err != nil {
@@ -100,5 +109,13 @@ var commitCmd = &cobra.Command{
 }
 
 func init() {
+	commitCmd.Flags().BoolVarP(
+		&addAll,
+		"all",
+		"a",
+		false,
+		"stage all changes before commit",
+	)
+
 	rootCmd.AddCommand(commitCmd)
 }
