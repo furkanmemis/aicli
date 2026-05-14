@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/furkanmemis/aicli/internal/ai"
 	gitinternal "github.com/furkanmemis/aicli/internal/git"
@@ -33,6 +36,30 @@ var commitCmd = &cobra.Command{
 		fmt.Println()
 		fmt.Println("Suggested commit:")
 		fmt.Println(message)
+		fmt.Println()
+
+		reader := bufio.NewReader(os.Stdin)
+
+		fmt.Print("Commit? (y/n): ")
+
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return err
+		}
+
+		input = strings.TrimSpace(strings.ToLower(input))
+
+		if input != "y" {
+			fmt.Println("Commit cancelled.")
+			return nil
+		}
+
+		err = gitinternal.Commit(message)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("Commit created successfully.")
 
 		return nil
 	},
