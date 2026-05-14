@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"time"
+
 	"github.com/charmbracelet/lipgloss"
 	"github.com/furkanmemis/aicli/internal/ai"
 	gitinternal "github.com/furkanmemis/aicli/internal/git"
@@ -31,16 +33,32 @@ var commitCmd = &cobra.Command{
 			Foreground(lipgloss.Color("#ff0000")).
 			Bold(true)
 
-		fmt.Println(generatingStyle.Render("Generating commit message..."))
+		fmt.Println(
+			generatingStyle.Render(
+				"Generating commit message...",
+			),
+		)
+
+		start := time.Now()
 
 		message, err := ai.GenerateCommitMessage(diff)
 		if err != nil {
 			return err
 		}
 
+		elapsed := time.Since(start).Seconds()
+
+		fmt.Println(
+			generatingStyle.Render(
+				fmt.Sprintf(
+					"Generated commit message in %.2fs",
+					elapsed,
+				),
+			),
+		)
+
 		commitStyle := lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#00FF87")).
-			Bold(true)
+			Foreground(lipgloss.Color("#00FF87"))
 
 		titleStyle := lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#FFA500")).
@@ -53,7 +71,10 @@ var commitCmd = &cobra.Command{
 
 		reader := bufio.NewReader(os.Stdin)
 
-		fmt.Print("Commit? (y/n): ")
+		commitApprove := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#0400ff"))
+
+		fmt.Print(commitApprove.Render("Commit? (y/n): "))
 
 		input, err := reader.ReadString('\n')
 		if err != nil {

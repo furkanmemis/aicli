@@ -19,27 +19,16 @@ type OllamaResponse struct {
 
 func GenerateCommitMessage(diff string) (string, error) {
 
-prompt := `
-Generate a git commit message using conventional commits format.
+	prompt := `
+Generate a conventional commit message.
 
-Format examples:
-- feat(auth): add jwt refresh token support
-- fix(api): handle nil pointer error
-- docs(readme): update installation guide
-
-Rules:
-- use conventional commits
-- lowercase only
-- max 72 characters
-- no markdown
-- no explanation
-- output only commit message
+Output only the commit message.
 
 Git diff:
 ` + diff
 
 	body := OllamaRequest{
-		Model:  "qwen2.5-coder:7b",
+		Model:  "qwen2.5-coder:1.5b",
 		Prompt: prompt,
 		Stream: false,
 	}
