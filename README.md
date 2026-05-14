@@ -1,9 +1,102 @@
 # aicli
 
-aicli is an AI-powered CLI tool written in Go that generates meaningful conventional git commit messages from staged changes.
+AI-powered Git CLI that generates clean and meaningful conventional commit messages using local LLMs with Ollama.
 
-The tool analyzes git diffs and uses local large language models through Ollama to create clean and developer-friendly commit messages directly in the terminal.
+## Features
 
-aicli focuses on privacy, simplicity, and developer experience by running completely locally without requiring any cloud API or external service.
+- AI-generated commit messages
+- Conventional commit support
+- Local LLM integration with Ollama
+- No API key required
+- Interactive commit confirmation
+- Colored terminal output
+- Built with Go and Cobra CLI
 
-Built with Go, Cobra CLI, and Ollama.
+---
+
+## Requirements
+
+- Go 1.24+
+- Ollama
+
+Install Ollama:
+
+```bash
+brew install ollama
+```
+
+Start Ollama server:
+
+```bash
+ollama serve
+```
+
+Download model:
+
+```bash
+ollama pull qwen2.5-coder:1.5b
+```
+
+List installed models:
+
+```bash
+ollama list
+```
+
+Remove model:
+
+```bash
+ollama rm qwen2.5-coder:1.5b
+```
+
+Stop running model:
+
+```bash
+ollama stop qwen2.5-coder:1.5b
+```
+
+---
+
+## Usage
+
+Stage your changes:
+
+```bash
+git add .
+```
+
+Generate commit message:
+
+```bash
+go run . commit
+```
+
+---
+
+## Example Output
+
+```bash
+Generated commit message in 0.52s
+
+Suggested commit:
+feat(cli): add ai-powered commit generation
+
+Commit? (y/n):
+```
+
+---
+
+## Tech Stack
+
+- Go
+- Cobra CLI
+- Lip Gloss
+- Ollama
+- Qwen2.5 Coder
+
+---
+
+
+## License
+
+MIT
