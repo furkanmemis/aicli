@@ -97,6 +97,10 @@ Commit? (y/n):
 ---
 
 
+qwen2.5-coder:1.5b was chosen because it provides a good balance between performance, speed, and low hardware requirements for local AI inference. It is lightweight enough to run efficiently on personal machines while still producing high-quality commit message suggestions for developer workflows.
+
+
+
 ## License
 
 MIT
