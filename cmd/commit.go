@@ -48,6 +48,26 @@ var commitCmd = &cobra.Command{
 			),
 		)
 
+		files, err := gitinternal.GetChangedFiles()
+		if err != nil {
+			return err
+		}
+
+		if len(files) == 0 {
+			fmt.Println("No staged changes found.")
+			return nil
+		}
+
+		changedFiles := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#a200ffcb"))
+		fmt.Println(changedFiles.Render("\nChanged Files:"))
+
+		for i := 0; i < len(files); i++ {
+			fmt.Println(changedFiles.Render(" " + files[i]))
+
+		}
+
+		fmt.Println("")
 		start := time.Now()
 
 		message, err := ai.GenerateCommitMessage(diff)
