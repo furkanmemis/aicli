@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/furkanmemis/aicli/internal/ai"
 	gitinternal "github.com/furkanmemis/aicli/internal/git"
 	"github.com/spf13/cobra"
@@ -26,16 +27,28 @@ var commitCmd = &cobra.Command{
 			return nil
 		}
 
-		fmt.Println("Generating commit message...")
+		generatingStyle := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#ff0000")).
+			Bold(true)
+
+		fmt.Println(generatingStyle.Render("Generating commit message..."))
 
 		message, err := ai.GenerateCommitMessage(diff)
 		if err != nil {
 			return err
 		}
 
+		commitStyle := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#00FF87")).
+			Bold(true)
+
+		titleStyle := lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FFA500")).
+			Bold(true)
+
 		fmt.Println()
-		fmt.Println("Suggested commit:")
-		fmt.Println(message)
+		fmt.Println(titleStyle.Render("Suggested commit:"))
+		fmt.Println(commitStyle.Render(message))
 		fmt.Println()
 
 		reader := bufio.NewReader(os.Stdin)
