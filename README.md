@@ -1,2 +1,1 @@
 # aicli
-test

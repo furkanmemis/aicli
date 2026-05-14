@@ -84,7 +84,7 @@ var commitCmd = &cobra.Command{
 		input = strings.TrimSpace(strings.ToLower(input))
 
 		if input != "y" {
-			fmt.Println("Commit cancelled.")
+			fmt.Println(titleStyle.Render("Commit cancelled."))
 			return nil
 		}
 
