@@ -58,30 +58,32 @@ ollama stop qwen2.5-coder:1.5b
 
 ## Usage
 
-Stage your changes:
+Build:
 
 ```bash
-git add .
+go build -o aicli  
 ```
 
-Generate commit message:
+Commit:
 
 ```bash
-go run . commit
+./aicli commit -a    
 ```
 
----
+## Configuration
 
-## Example Output
+Task Type & TaskID
 
 ```bash
-Generated commit message in 0.52s
-
-Suggested commit:
-feat(cli): add ai-powered commit generation
-
-Commit? (y/n):
+./aicli config -t "fix" -i "TYU-3453"
 ```
+
+Show All Configuration
+
+```bash
+./aicli config -s
+```
+
 
 ---
 
