@@ -8,31 +8,60 @@ import (
 )
 
 type OllamaRequest struct {
-	Model  string `json:"model"`
-	Prompt string `json:"prompt"`
-	Stream bool   `json:"stream"`
+	Model   string                 `json:"model"`
+	Prompt  string                 `json:"prompt"`
+	Stream  bool                   `json:"stream"`
+	Options map[string]interface{} `json:"options"`
 }
 
 type OllamaResponse struct {
 	Response string `json:"response"`
 }
 
-func GenerateCommitMessage(diff string) (string, error) {
+func GenerateCommitMessage(diff string, taskType string, taskID string) (string, error) {
 
-	prompt := `
-Generate a conventional commit message.
+prompt := fmt.Sprintf(`
+You generate ONLY conventional commits.
 
-Output only the commit message.
+The text inside parentheses is the ISSUE ID.
+It is NOT a scope.
+
+You MUST use this exact prefix:
+
+%s(%s):
+
+Examples:
+feat(ABC-123): add login page
+chore(TASK-9): update docker config
+
+Rules:
+- "%s" is the ONLY allowed type
+- "%s" is the EXACT issue ID
+- Never replace the issue ID with scope names like config, api, auth
+- Output exactly one line
+- No markdown
+- No explanations
 
 Git diff:
-` + diff
+%s
+`,
+	taskType,
+	taskID,
+	taskType,
+	taskID,
+	diff,
+)
 
 	body := OllamaRequest{
 		Model:  "qwen2.5-coder:1.5b",
 		Prompt: prompt,
 		Stream: false,
+		Options: map[string]interface{}{
+			"temperature": 0,
+			"top_p":       0.1,
+			"top_k":       10,
+		},
 	}
-
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return "", err

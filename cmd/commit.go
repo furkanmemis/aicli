@@ -70,10 +70,17 @@ var commitCmd = &cobra.Command{
 		fmt.Println("")
 		start := time.Now()
 
-		message, err := ai.GenerateCommitMessage(diff)
+		config, err := ReadConfig()
+
 		if err != nil {
 			return err
 		}
+
+		message, err := ai.GenerateCommitMessage(diff, config.TaskType, config.TaskID)
+		if err != nil {
+			return err
+		}
+
 
 		elapsed := time.Since(start).Seconds()
 
@@ -136,6 +143,5 @@ func init() {
 		false,
 		"stage all changes before commit",
 	)
-
 	rootCmd.AddCommand(commitCmd)
 }
