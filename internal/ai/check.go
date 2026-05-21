@@ -12,7 +12,6 @@ import (
 
 func EnsureModelExists(model string) error {
 
-	// ollama kurulu mu?
 	_, err := exec.LookPath("ollama")
 	if err != nil {
 
@@ -22,7 +21,6 @@ func EnsureModelExists(model string) error {
 		}
 	}
 
-	// ollama serve çalışıyor mu?
 	if !isOllamaRunning() {
 
 		fmt.Println("Ollama is not running. Starting ollama serve...")
@@ -32,7 +30,6 @@ func EnsureModelExists(model string) error {
 			return err
 		}
 
-		// ayağa kalkmasını bekle
 		for i := 0; i < 10; i++ {
 
 			if isOllamaRunning() {
@@ -47,7 +44,6 @@ func EnsureModelExists(model string) error {
 		}
 	}
 
-	// model var mı?
 	listCmd := exec.Command("ollama", "list")
 
 	output, err := listCmd.Output()
