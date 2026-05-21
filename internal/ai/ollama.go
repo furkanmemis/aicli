@@ -5,52 +5,46 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
+	"strings"
 )
 
 type OllamaRequest struct {
 	Model   string                 `json:"model"`
 	Prompt  string                 `json:"prompt"`
 	Stream  bool                   `json:"stream"`
-	Options map[string]interface{} `json:"options"`
+	Options map[string]interface{} `json:"options,omitempty"`
 }
 
 type OllamaResponse struct {
 	Response string `json:"response"`
 }
 
-func GenerateCommitMessage(diff string, taskType string, taskID string) (string, error) {
+func GenerateCommitMessage(
+	diff string,
+	taskType string,
+	taskID string,
+) (string, error) {
 
-prompt := fmt.Sprintf(`
-You generate ONLY conventional commits.
-
-The text inside parentheses is the ISSUE ID.
-It is NOT a scope.
-
-You MUST use this exact prefix:
-
-%s(%s):
-
-Examples:
-feat(ABC-123): add login page
-chore(TASK-9): update docker config
+	prompt := fmt.Sprintf(`
+Generate a short git commit description based on this diff.
 
 Rules:
-- "%s" is the ONLY allowed type
-- "%s" is the EXACT issue ID
-- Never replace the issue ID with scope names like config, api, auth
-- Output exactly one line
+- Output ONLY the description
+- No commit type
+- No issue id
+- No colon
 - No markdown
-- No explanations
+- Keep it short and meaningful
+
+Examples:
+add login endpoint
+update docker config
+fix auth validation
 
 Git diff:
 %s
-`,
-	taskType,
-	taskID,
-	taskType,
-	taskID,
-	diff,
-)
+`, diff)
 
 	body := OllamaRequest{
 		Model:  "qwen2.5-coder:1.5b",
@@ -62,6 +56,7 @@ Git diff:
 			"top_k":       10,
 		},
 	}
+
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return "", err
@@ -99,5 +94,21 @@ Git diff:
 		return "", fmt.Errorf("empty ai response")
 	}
 
-	return result.Response, nil
+	message := strings.TrimSpace(result.Response)
+
+	message = regexp.MustCompile(
+		`^(feat|fix|chore|docs|style|refactor|test|perf|build|ci|revert)(\([^)]+\))?:\s*`,
+	).ReplaceAllString(message, "")
+
+	message = strings.ReplaceAll(message, "\n", " ")
+	message = strings.TrimSpace(message)
+
+	finalCommit := fmt.Sprintf(
+		"%s(%s): %s",
+		taskType,
+		taskID,
+		message,
+	)
+
+	return finalCommit, nil
 }
