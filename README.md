@@ -12,7 +12,6 @@ AI-powered Git CLI that generates clean and meaningful conventional commit messa
 - Colored terminal output
 - Built with Go and Cobra CLI
 
----
 
 ## Requirements
 
