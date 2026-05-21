@@ -103,7 +103,6 @@ func ReadConfig() (Config, error) {
 	fileData, err := os.ReadFile("config.json")
 	if err != nil {
 
-		// dosya yoksa boş config dön
 		if os.IsNotExist(err) {
 			return config, nil
 		}
