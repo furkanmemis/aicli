@@ -15,7 +15,11 @@ func EnsureModelExists(model string) error {
 	// ollama kurulu mu?
 	_, err := exec.LookPath("ollama")
 	if err != nil {
-		return fmt.Errorf("ollama is not installed")
+
+		err = installOllama()
+		if err != nil {
+			return err
+		}
 	}
 
 	// ollama serve çalışıyor mu?
@@ -106,6 +110,46 @@ func startOllama() error {
 	if err != nil {
 		return fmt.Errorf("failed to start ollama serve: %w", err)
 	}
+
+	return nil
+}
+
+func installOllama() error {
+
+	fmt.Println("Ollama not found. Installing...")
+
+	var cmd *exec.Cmd
+
+	switch runtime.GOOS {
+
+	case "darwin":
+		cmd = exec.Command("brew", "install", "ollama")
+
+	case "linux":
+		cmd = exec.Command(
+			"sh",
+			"-c",
+			"curl -fsSL https://ollama.com/install.sh | sh",
+		)
+
+	case "windows":
+		return fmt.Errorf(
+			"automatic installation is not supported on windows",
+		)
+
+	default:
+		return fmt.Errorf("unsupported operating system")
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to install ollama: %w", err)
+	}
+
+	fmt.Println("Ollama installed successfully")
 
 	return nil
 }
